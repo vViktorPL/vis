@@ -31034,6 +31034,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
         var neutralborderWidth = this.options.borderWidth;
         var selectionLineWidth = this.options.borderWidthSelected || 2 * this.options.borderWidth;
+        var shapeProperties = this.options.shapeProperties;
         var borderWidth = (selected ? selectionLineWidth : neutralborderWidth) / this.body.view.scale;
         ctx.lineWidth = Math.min(this.width, borderWidth);
 
@@ -31047,6 +31048,18 @@ return /******/ (function(modules) { // webpackBootstrap
         ctx.fill();
         // disable shadows for other elements.
         this.disableShadow(ctx);
+
+        if (highlight) {
+          var rememberedLineWidth = ctx.lineWidth;
+
+          ctx.strokeStyle = ctx.fillStyle;
+          ctx.lineWidth = shapeProperties.highlightBorderWidth;
+
+          ctx[shape](x, y, this.options.size + shapeProperties.highlightRadius);
+          ctx.stroke();
+
+          ctx.lineWidth = rememberedLineWidth;
+        }
 
         //draw dashed border if enabled, save and restore is required for firefox not to crash on unix.
         ctx.save();
@@ -31128,8 +31141,8 @@ return /******/ (function(modules) { // webpackBootstrap
       }
     }, {
       key: 'draw',
-      value: function draw(ctx, x, y, selected, hover) {
-        this._drawShape(ctx, 'circle', 2, x, y, selected, hover);
+      value: function draw(ctx, x, y, selected, hover, highlight) {
+        this._drawShape(ctx, 'circle', 2, x, y, selected, hover, highlight);
       }
     }, {
       key: 'distanceToBorder',
