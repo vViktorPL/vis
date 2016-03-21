@@ -5,7 +5,7 @@
  * A dynamic, browser-based visualization library.
  *
  * @version 4.15.1-SNAPSHOT
- * @date    2016-03-08
+ * @date    2016-03-21
  *
  * @license
  * Copyright (C) 2011-2016 Almende B.V, http://almende.com
@@ -28475,6 +28475,27 @@ return /******/ (function(modules) { // webpackBootstrap
     return options;
   };
 
+  Network.prototype.changeZoom = function (relativeScale) {
+
+    this.body.view.scale += this.body.view.scale * relativeScale;
+
+    this.view.moveTo({
+      scale: this.body.view.scale
+    });
+
+    this.body.emitter.emit("zoom", {
+      direction: relativeScale >= 0 ? "+" : "-",
+      scale: this.body.view.scale
+    });
+  };
+
+  Network.prototype.setZoomIn = function () {
+    this.changeZoom(0.1);
+  };
+  Network.prototype.setZoomOut = function () {
+    this.changeZoom(-0.1);
+  };
+
   module.exports = Network;
 
 /***/ },
@@ -31058,6 +31079,7 @@ return /******/ (function(modules) { // webpackBootstrap
           ctx[shape](x, y, this.options.size + shapeProperties.highlightRadius);
           ctx.stroke();
 
+          // restore original line width (how it was before painting highlight outline)
           ctx.lineWidth = rememberedLineWidth;
         }
 
